@@ -52,6 +52,21 @@
             return outBuffer.Length + 2;
         }
 
+        public void WriteStringEx(string outString)
+        {
+            var sb = new StringBuilder();
+            sb.Append(UInt16.MinValue);
+            sb.Append(outString);
+            var outBuffer = streamEncoding.GetBytes(sb.ToString());
+            var len = outBuffer.Length;
+            if (len > ushort.MaxValue)
+            {
+                len = ushort.MaxValue;
+            }
+            ioStream.Write(outBuffer, 0, len);
+            ioStream.Flush();
+        }
+
         #endregion
     }
 }

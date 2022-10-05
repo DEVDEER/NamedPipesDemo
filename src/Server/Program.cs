@@ -46,7 +46,7 @@ static async Task StartServerAsync()
             // calculate the checksum
             var checkSum = GetHash(data, Encoding.ASCII); 
             var payload = $"{data}{checkSum}";
-            ss.WriteString(payload);
+            ss.WriteStringEx(payload);
             await Task.Delay(10);
         }
     }
