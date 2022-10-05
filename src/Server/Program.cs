@@ -2,6 +2,8 @@
 using System.Runtime.Intrinsics.Arm;
 using System.Text;
 
+using Force.Crc32;
+
 using Logic;
 
 await StartServerAsync();
@@ -9,8 +11,8 @@ await StartServerAsync();
 static string GetHash(string original, Encoding encoding)
 {
     var bytes = encoding.GetBytes(original);
-    var hashedBytes = System.IO.Hashing.Crc32.Hash(bytes);
-    return encoding.GetString(hashedBytes);
+    var hashedBytes = Crc32Algorithm.Compute(bytes, 0, original.Length);
+    return hashedBytes.ToString("0000000000");
 }
 
 static async Task StartServerAsync()
@@ -44,7 +46,7 @@ static async Task StartServerAsync()
             var a = "02122";
             var data = $"{ticks}{x}{y}{a}11";
             // calculate the checksum
-            var checkSum = GetHash(data, Encoding.ASCII); 
+            var checkSum = GetHash(data, Encoding.UTF8); 
             var payload = $"{data}{checkSum}";
             ss.WriteStringEx(payload);
             await Task.Delay(10);
