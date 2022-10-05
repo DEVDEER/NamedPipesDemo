@@ -1,9 +1,17 @@
 ﻿using System.IO.Pipes;
+using System.Runtime.Intrinsics.Arm;
+using System.Text;
 
 using Logic;
 
 await StartServerAsync();
 
+static string GetHash(string original, Encoding encoding)
+{
+    var bytes = encoding.GetBytes(original);
+    var hashedBytes = System.IO.Hashing.Crc32.Hash(bytes);
+    return encoding.GetString(hashedBytes);
+}
 
 static async Task StartServerAsync()
 {
@@ -35,7 +43,8 @@ static async Task StartServerAsync()
             var y = "090100";
             var a = "02122";
             var data = $"{ticks}{x}{y}{a}11";
-            var checkSum = Math.Abs(data.GetHashCode()).ToString("0000000000");
+            // calculate the checksum
+            var checkSum = GetHash(data, Encoding.ASCII); 
             var payload = $"{data}{checkSum}";
             ss.WriteString(payload);
             await Task.Delay(10);
